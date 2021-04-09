@@ -1,0 +1,24 @@
+type Query {
+  user(id: ID!): User!
+  posts(limit: Int, pageToken: String): PostsResponse
+}
+
+type User {
+  id: ID!
+  email: String!
+  profile: Profile
+}
+
+type Profile {
+  age: Int
+  name: String
+}
+
+type Post {
+  text: String!
+}
+
+type PostsResponse {
+  nextPageToken: String,
+  posts: [Post!]
+}
