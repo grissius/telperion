@@ -12,15 +12,21 @@ const USERS = [
   }
 ];
 
+const POSTS = times((50), i => ({ id: i, text: `Post text ${i}` }))
+
+const tokenToOffset = (token: string) => Number(token)
+
 export const resolvers: Resolvers = {
   Query: {
     user: (parent, args) => {
       return USERS.find(u => u.id === args.id)!;
     },
     posts: (parent, args) => {
+      const offset = tokenToOffset(args.pageToken ?? '0')
+      const limit = args.limit ?? 10
       return {
-        posts: times((args.limit ?? 10), i => ({ text: `Post text ${i}` })),
-        nextPageToken: '',
+        posts: POSTS.slice(offset, limit),
+        nextPageToken: (offset + limit) < POSTS.length ? undefined : ('' + offset + limit),
       }
     }
   },
