@@ -15,10 +15,23 @@ type Profile {
 }
 
 type Post {
+  id: ID!
   text: String!
 }
 
+type PostsEdge {
+  node: Post!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  endCursor: String
+}
+
 type PostsResponse {
+  edges: [PostsEdge!]!,
+  pageInfo: PageInfo!,
   nextPageToken: String,
   posts: [Post!]
 }

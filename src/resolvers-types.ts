@@ -13,13 +13,28 @@ export type Scalars = {
   Float: number;
 };
 
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  hasNextPage: Scalars['Boolean'];
+  endCursor?: Maybe<Scalars['String']>;
+};
+
 export type Post = {
   __typename?: 'Post';
+  id: Scalars['ID'];
   text: Scalars['String'];
+};
+
+export type PostsEdge = {
+  __typename?: 'PostsEdge';
+  node: Post;
+  cursor: Scalars['String'];
 };
 
 export type PostsResponse = {
   __typename?: 'PostsResponse';
+  edges: Array<PostsEdge>;
+  pageInfo: PageInfo;
   nextPageToken?: Maybe<Scalars['String']>;
   posts?: Maybe<Array<Post>>;
 };
@@ -132,36 +147,55 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Post: ResolverTypeWrapper<Post>;
+  PageInfo: ResolverTypeWrapper<PageInfo>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Post: ResolverTypeWrapper<Post>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  PostsEdge: ResolverTypeWrapper<PostsEdge>;
   PostsResponse: ResolverTypeWrapper<PostsResponse>;
   Profile: ResolverTypeWrapper<Profile>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   User: ResolverTypeWrapper<User>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Post: Post;
+  PageInfo: PageInfo;
+  Boolean: Scalars['Boolean'];
   String: Scalars['String'];
+  Post: Post;
+  ID: Scalars['ID'];
+  PostsEdge: PostsEdge;
   PostsResponse: PostsResponse;
   Profile: Profile;
   Int: Scalars['Int'];
   Query: {};
-  ID: Scalars['ID'];
   User: User;
-  Boolean: Scalars['Boolean'];
+};
+
+export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PostsEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PostsEdge'] = ResolversParentTypes['PostsEdge']> = {
+  node?: Resolver<ResolversTypes['Post'], ParentType, ContextType>;
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PostsResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['PostsResponse'] = ResolversParentTypes['PostsResponse']> = {
+  edges?: Resolver<Array<ResolversTypes['PostsEdge']>, ParentType, ContextType>;
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   nextPageToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   posts?: Resolver<Maybe<Array<ResolversTypes['Post']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -186,7 +220,9 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  PageInfo?: PageInfoResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
+  PostsEdge?: PostsEdgeResolvers<ContextType>;
   PostsResponse?: PostsResponseResolvers<ContextType>;
   Profile?: ProfileResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

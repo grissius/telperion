@@ -13,6 +13,7 @@ const USERS = [
 ];
 
 const POSTS = times((50), i => ({ id: i, text: `Post text ${i}` }))
+const postToOut = <T extends { id: number }>(x: T) => ({...x, id: String(x.id)})
 
 const tokenToOffset = (token: string) => Number(token)
 
@@ -22,11 +23,17 @@ export const resolvers: Resolvers = {
       return USERS.find(u => u.id === args.id)!;
     },
     posts: (parent, args) => {
-      const offset = tokenToOffset(args.pageToken ?? '0')
+      const anchor = tokenToOffset(args.pageToken ?? '0')
       const limit = args.limit ?? 10
+      const posts = POSTS.filter(p => p.id >= anchor).slice(0, limit)
       return {
-        posts: POSTS.slice(offset, limit),
-        nextPageToken: (offset + limit) < POSTS.length ? undefined : ('' + offset + limit),
+        edges: posts.map(v => ({ cursor: String(v.id), node: postToOut(v) })),
+        pageInfo: {
+          hasNextPage: posts.length === limit,
+          endCursor: String(posts[posts.length - 1].id)
+        },
+        posts: posts.map(postToOut),
+        nextPageToken: undefined,
       }
     }
   },
