@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+    sql:
+      image: postgres
+      ports:
+        - 5432:5432
+      environment:
+        POSTGRES_USER: docker_pg
+        POSTGRES_PASSWORD: docker_pg
+        POSTGRES_DB: docker_pg

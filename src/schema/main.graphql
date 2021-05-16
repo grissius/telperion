@@ -17,7 +17,7 @@ type Profile {
 
 type Post {
   id: ID!
-  text: String!
+  content: String
 }
 
 type PostsEdge {

@@ -1,5 +1,7 @@
 import { Resolvers } from "./resolvers-types";
 import { times } from "lodash";
+import { prisma } from "./prismaClient";
+import { post } from "@prisma/client";
 
 const USERS = [
   {
@@ -13,7 +15,7 @@ const USERS = [
 ];
 
 const POSTS = times((50), i => ({ id: i, text: `Post text ${i}` }))
-const postToOut = <T extends { id: number }>(x: T) => ({...x, id: String(x.id)})
+const postToOut = (x: post) => ({...x, id: String(x.id)})
 
 const tokenToOffset = (token: string) => Number(token)
 
@@ -22,10 +24,10 @@ export const resolvers: Resolvers = {
     user: (parent, args) => {
       return USERS.find(u => u.id === args.id)!;
     },
-    posts: (parent, args) => {
+    posts: async (parent, args) => {
       const anchor = tokenToOffset(args.after ?? '-1')
       const limit = args.first ?? 10
-      const posts = POSTS.filter(p => p.id > anchor).slice(0, limit)
+      const posts = await prisma.post.findMany({ where: { id: { gt: anchor } }, take: limit })
       console.log({ posts, limit, anchor, args })
       return {
         edges: posts.map(v => ({ cursor: String(v.id), node: postToOut(v) })),
@@ -38,7 +40,7 @@ export const resolvers: Resolvers = {
       }
     },
     post: (parent, args) => {
-      return postToOut(POSTS[Number(args.id)])
+      return prisma.post.findFirst({ where: { id: { equals: Number(args.id) } }, rejectOnNotFound: true }).then(postToOut)
     }
   },
 };

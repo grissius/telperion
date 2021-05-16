@@ -22,7 +22,7 @@ export type PageInfo = {
 export type Post = {
   __typename?: 'Post';
   id: Scalars['ID'];
-  text: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
 };
 
 export type PostsEdge = {
@@ -189,7 +189,7 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
