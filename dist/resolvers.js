@@ -32,19 +32,23 @@ exports.resolvers = {
             return USERS.find(function (u) { return u.id === args.id; });
         },
         posts: function (parent, args) {
-            var _a, _b;
-            var anchor = tokenToOffset((_a = args.pageToken) !== null && _a !== void 0 ? _a : '0');
-            var limit = (_b = args.limit) !== null && _b !== void 0 ? _b : 10;
-            var posts = POSTS.filter(function (p) { return p.id >= anchor; }).slice(0, limit);
+            var _a, _b, _c, _d;
+            var anchor = tokenToOffset((_a = args.after) !== null && _a !== void 0 ? _a : '-1');
+            var limit = (_b = args.first) !== null && _b !== void 0 ? _b : 10;
+            var posts = POSTS.filter(function (p) { return p.id > anchor; }).slice(0, limit);
+            console.log({ posts: posts, limit: limit, anchor: anchor, args: args });
             return {
                 edges: posts.map(function (v) { return ({ cursor: String(v.id), node: postToOut(v) }); }),
                 pageInfo: {
                     hasNextPage: posts.length === limit,
-                    endCursor: String(posts[posts.length - 1].id)
+                    endCursor: String((_d = (_c = posts[posts.length - 1]) === null || _c === void 0 ? void 0 : _c.id) !== null && _d !== void 0 ? _d : '')
                 },
                 posts: posts.map(postToOut),
                 nextPageToken: undefined,
             };
+        },
+        post: function (parent, args) {
+            return postToOut(POSTS[Number(args.id)]);
         }
     },
 };

@@ -49,6 +49,7 @@ export type Query = {
   __typename?: 'Query';
   user: User;
   posts?: Maybe<PostsResponse>;
+  post?: Maybe<Post>;
 };
 
 
@@ -58,8 +59,13 @@ export type QueryUserArgs = {
 
 
 export type QueryPostsArgs = {
-  limit?: Maybe<Scalars['Int']>;
-  pageToken?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryPostArgs = {
+  id: Scalars['ID'];
 };
 
 export type User = {
@@ -210,6 +216,7 @@ export type ProfileResolvers<ContextType = any, ParentType extends ResolversPare
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   posts?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<QueryPostsArgs, never>>;
+  post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {

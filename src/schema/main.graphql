@@ -1,6 +1,7 @@
 type Query {
   user(id: ID!): User!
-  posts(limit: Int, pageToken: String): PostsResponse
+  posts(first: Int, after: String): PostsResponse
+  post(id: ID!): Post
 }
 
 type User {

@@ -23,18 +23,22 @@ export const resolvers: Resolvers = {
       return USERS.find(u => u.id === args.id)!;
     },
     posts: (parent, args) => {
-      const anchor = tokenToOffset(args.pageToken ?? '0')
-      const limit = args.limit ?? 10
-      const posts = POSTS.filter(p => p.id >= anchor).slice(0, limit)
+      const anchor = tokenToOffset(args.after ?? '-1')
+      const limit = args.first ?? 10
+      const posts = POSTS.filter(p => p.id > anchor).slice(0, limit)
+      console.log({ posts, limit, anchor, args })
       return {
         edges: posts.map(v => ({ cursor: String(v.id), node: postToOut(v) })),
         pageInfo: {
           hasNextPage: posts.length === limit,
-          endCursor: String(posts[posts.length - 1].id)
+          endCursor: String(posts[posts.length - 1]?.id ?? '')
         },
         posts: posts.map(postToOut),
         nextPageToken: undefined,
       }
+    },
+    post: (parent, args) => {
+      return postToOut(POSTS[Number(args.id)])
     }
   },
 };
