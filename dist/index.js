@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,20 +54,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var apollo_server_1 = require("apollo-server");
 var fs_1 = require("fs");
 var path_1 = require("path");
+var prismaClient_1 = require("./prismaClient");
+var firebaseAdmin = __importStar(require("firebase-admin"));
 var resolvers_1 = require("./resolvers");
-function main() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2];
+var config_1 = __importDefault(require("./config"));
+firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert(config_1.default.services.firebaseServiceAccount),
+});
+var server = new apollo_server_1.ApolloServer({ resolvers: resolvers_1.resolvers, typeDefs: fs_1.readFileSync(path_1.join(__dirname, '../src/schema/main.graphql')).toString('utf-8'), context: function (_a) {
+        var req = _a.req;
+        return __awaiter(void 0, void 0, void 0, function () {
+            var token, decoded;
+            var _b, _c;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        token = (_c = (_b = req.headers['authorization']) === null || _b === void 0 ? void 0 : _b.match(/bearer (\S+)/i)) === null || _c === void 0 ? void 0 : _c[1];
+                        return [4, firebaseAdmin.auth().verifyIdToken(token !== null && token !== void 0 ? token : '')];
+                    case 1:
+                        decoded = _d.sent();
+                        return [4, prismaClient_1.prisma.user.upsert({ where: { uid: decoded.uid }, create: { uid: decoded.uid, email: decoded.email, name: decoded.name }, update: { uid: decoded.uid, email: decoded.email, name: decoded.name } })];
+                    case 2:
+                        _d.sent();
+                        return [2];
+                }
+            });
         });
-    });
-}
-main();
-var server = new apollo_server_1.ApolloServer({ resolvers: resolvers_1.resolvers, typeDefs: fs_1.readFileSync(path_1.join(__dirname, '../src/schema/main.graphql')).toString('utf-8') });
+    } });
 server.listen()
     .then(function (_a) {
     var url = _a.url;
