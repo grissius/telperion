@@ -15,8 +15,12 @@ firebaseAdmin.initializeApp({
 
 const server = new ApolloServer({ resolvers, typeDefs: readFileSync(join(__dirname, '../src/schema/main.graphql')).toString('utf-8'), context: async ({ req }) => {
   const token = req.headers['authorization']?.match(/bearer (\S+)/i)?.[1]
-  const decoded = await firebaseAdmin.auth().verifyIdToken(token ?? '')
-  await prisma.user.upsert({ where: { uid: decoded.uid }, create: { uid: decoded.uid, email: decoded.email, name: decoded.name }, update: { uid: decoded.uid, email: decoded.email, name: decoded.name } })
+  if (token) {
+    const decoded = await firebaseAdmin.auth().verifyIdToken(token ?? '')
+    const user = await prisma.user.upsert({ where: { uid: decoded.uid }, create: { uid: decoded.uid, email: decoded.email, name: decoded.name }, update: { uid: decoded.uid, email: decoded.email, name: decoded.name } })
+    return { user }
+  }
+  return {}
 } });
 
 server.listen()

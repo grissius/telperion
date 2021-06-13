@@ -71,19 +71,21 @@ firebaseAdmin.initializeApp({
 var server = new apollo_server_1.ApolloServer({ resolvers: resolvers_1.resolvers, typeDefs: fs_1.readFileSync(path_1.join(__dirname, '../src/schema/main.graphql')).toString('utf-8'), context: function (_a) {
         var req = _a.req;
         return __awaiter(void 0, void 0, void 0, function () {
-            var token, decoded;
+            var token, decoded, user;
             var _b, _c;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
                         token = (_c = (_b = req.headers['authorization']) === null || _b === void 0 ? void 0 : _b.match(/bearer (\S+)/i)) === null || _c === void 0 ? void 0 : _c[1];
+                        if (!token) return [3, 3];
                         return [4, firebaseAdmin.auth().verifyIdToken(token !== null && token !== void 0 ? token : '')];
                     case 1:
                         decoded = _d.sent();
                         return [4, prismaClient_1.prisma.user.upsert({ where: { uid: decoded.uid }, create: { uid: decoded.uid, email: decoded.email, name: decoded.name }, update: { uid: decoded.uid, email: decoded.email, name: decoded.name } })];
                     case 2:
-                        _d.sent();
-                        return [2];
+                        user = _d.sent();
+                        return [2, { user: user }];
+                    case 3: return [2, {}];
                 }
             });
         });

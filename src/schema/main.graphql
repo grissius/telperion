@@ -1,23 +1,30 @@
 type Query {
-  user(id: ID!): User!
+  user(id: ID!): User
   posts(first: Int, after: String): PostsResponse
   post(id: ID!): Post
 }
 
-type User {
-  id: ID!
-  email: String!
-  profile: Profile
+type Mutation {
+  updatePost(request: PostInput!, id: ID): Post
 }
 
-type Profile {
-  age: Int
+type User {
+  id: ID!
+  email: String
   name: String
 }
 
 type Post {
-  id: ID!
+  id: ID
   content: String
+  title: String
+  imageLink: String
+}
+
+input PostInput {
+  content: String
+  title: String
+  imageLink: String
 }
 
 type PostsEdge {

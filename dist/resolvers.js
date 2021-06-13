@@ -62,11 +62,12 @@ var USERS = [
 ];
 var POSTS = lodash_1.times((50), function (i) { return ({ id: i, text: "Post text " + i }); });
 var postToOut = function (x) { return (__assign(__assign({}, x), { id: String(x.id) })); };
+var userToOut = function (x) { return (__assign(__assign({}, x), { id: String(x.id) })); };
 var tokenToOffset = function (token) { return Number(token); };
 exports.resolvers = {
     Query: {
         user: function (parent, args) {
-            return USERS.find(function (u) { return u.id === args.id; });
+            return prismaClient_1.prisma.user.findFirst({ where: { id: Number(args.id) }, rejectOnNotFound: true }).then(userToOut);
         },
         posts: function (parent, args) { return __awaiter(void 0, void 0, void 0, function () {
             var anchor, limit, posts;
@@ -96,4 +97,21 @@ exports.resolvers = {
             return prismaClient_1.prisma.post.findFirst({ where: { id: { equals: Number(args.id) } }, rejectOnNotFound: true }).then(postToOut);
         }
     },
+    Mutation: {
+        updatePost: function (parent, args) { return __awaiter(void 0, void 0, void 0, function () {
+            var request, id, title, content, imageLink, post;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        request = args.request, id = args.id;
+                        title = request.title, content = request.content, imageLink = request.imageLink;
+                        console.log({ request: request, id: id });
+                        return [4, prismaClient_1.prisma.post.upsert({ where: { id: Number(id) }, update: { title: title !== null && title !== void 0 ? title : '', content: content, author_id: 1 }, create: { title: title !== null && title !== void 0 ? title : '', content: content, author_id: 1 } })];
+                    case 1:
+                        post = _a.sent();
+                        return [2, postToOut(post)];
+                }
+            });
+        }); }
+    }
 };

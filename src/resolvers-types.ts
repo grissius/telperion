@@ -13,6 +13,17 @@ export type Scalars = {
   Float: number;
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  updatePost?: Maybe<Post>;
+};
+
+
+export type MutationUpdatePostArgs = {
+  request: PostInput;
+  id?: Maybe<Scalars['ID']>;
+};
+
 export type PageInfo = {
   __typename?: 'PageInfo';
   hasNextPage: Scalars['Boolean'];
@@ -21,8 +32,16 @@ export type PageInfo = {
 
 export type Post = {
   __typename?: 'Post';
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
   content?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  imageLink?: Maybe<Scalars['String']>;
+};
+
+export type PostInput = {
+  content?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  imageLink?: Maybe<Scalars['String']>;
 };
 
 export type PostsEdge = {
@@ -39,15 +58,9 @@ export type PostsResponse = {
   posts?: Maybe<Array<Post>>;
 };
 
-export type Profile = {
-  __typename?: 'Profile';
-  age?: Maybe<Scalars['Int']>;
-  name?: Maybe<Scalars['String']>;
-};
-
 export type Query = {
   __typename?: 'Query';
-  user: User;
+  user?: Maybe<User>;
   posts?: Maybe<PostsResponse>;
   post?: Maybe<Post>;
 };
@@ -71,8 +84,8 @@ export type QueryPostArgs = {
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
-  email: Scalars['String'];
-  profile?: Maybe<Profile>;
+  email?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 
@@ -153,32 +166,38 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Mutation: ResolverTypeWrapper<{}>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Post: ResolverTypeWrapper<Post>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
+  PostInput: PostInput;
   PostsEdge: ResolverTypeWrapper<PostsEdge>;
   PostsResponse: ResolverTypeWrapper<PostsResponse>;
-  Profile: ResolverTypeWrapper<Profile>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Mutation: {};
+  ID: Scalars['ID'];
   PageInfo: PageInfo;
   Boolean: Scalars['Boolean'];
   String: Scalars['String'];
   Post: Post;
-  ID: Scalars['ID'];
+  PostInput: PostInput;
   PostsEdge: PostsEdge;
   PostsResponse: PostsResponse;
-  Profile: Profile;
-  Int: Scalars['Int'];
   Query: {};
+  Int: Scalars['Int'];
   User: User;
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  updatePost?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<MutationUpdatePostArgs, 'request'>>;
 };
 
 export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
@@ -188,8 +207,10 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  imageLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -207,31 +228,25 @@ export type PostsResponseResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['Profile'] = ResolversParentTypes['Profile']> = {
-  age?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   posts?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<QueryPostsArgs, never>>;
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  profile?: Resolver<Maybe<ResolversTypes['Profile']>, ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
+  Mutation?: MutationResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
   PostsEdge?: PostsEdgeResolvers<ContextType>;
   PostsResponse?: PostsResponseResolvers<ContextType>;
-  Profile?: ProfileResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
